@@ -31,7 +31,7 @@ public class CourseOpenDTO {
 
     private List<CourseTime> courseTimes;
 
-    private List<Department> prohibitedDepartments;
+    private List<Department> allowedDepartments;
 
     private List<MajorType> prohibitedMajorTypes;
 }

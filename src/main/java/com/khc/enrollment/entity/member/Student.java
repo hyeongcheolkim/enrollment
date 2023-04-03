@@ -27,8 +27,5 @@ public class Student extends Base {
     private Map<MajorType, Department> majors;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<ParticipatedCourse> participatedCourse;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    private List<GradeCard> gradeCards;
+    private List<Enrollment> enrollments;
 }

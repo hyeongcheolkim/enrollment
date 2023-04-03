@@ -14,19 +14,19 @@ public enum ScoreType {
     PASS(4.5, "P"),
     NO_PASS(0.0, "NP");
 
-    double score;
+    double digit;
     String str;
 
-    public double getScore() {
-        return score;
+    public double getDigit() {
+        return digit;
     }
 
     public String getStr() {
         return str;
     }
 
-    ScoreType(double score, String code) {
-        this.score = score;
+    ScoreType(double digit, String code) {
+        this.digit = digit;
         this.str = code;
     }
 }

@@ -1,6 +1,7 @@
 package com.khc.enrollment.controller;
 
 import com.khc.enrollment.controller.request.CourseOpenRequest;
+import com.khc.enrollment.controller.response.CourseResponse;
 import com.khc.enrollment.entity.Course.Course;
 import com.khc.enrollment.entity.Department;
 import com.khc.enrollment.entity.Subject;
@@ -13,6 +14,8 @@ import com.khc.enrollment.repository.SubjectRepository;
 import com.khc.enrollment.service.CourseService;
 import com.khc.enrollment.service.dto.CourseOpenDTO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -40,7 +43,7 @@ public class CourseRestController {
                 .orElseThrow(NoExistEntityException::new);
         Professor professor = professorRepository.findById(courseOpenRequest.getProfessorId())
                 .orElseThrow(NoExistEntityException::new);
-        List<Department> prohibitedDepartments = courseOpenRequest.getProhibitedDepartmentIds().stream()
+        List<Department> allowedDepartments = courseOpenRequest.getAllowedDepartments().stream()
                 .map(e -> departmentRepository.findById(e).orElseThrow(NoExistEntityException::new))
                 .collect(Collectors.toList());
 
@@ -48,7 +51,7 @@ public class CourseRestController {
                 .subject(subject)
                 .department(department)
                 .professor(professor)
-                .prohibitedDepartments(prohibitedDepartments)
+                .allowedDepartments(allowedDepartments)
                 .courseTimes(courseOpenRequest.getCourseTimes())
                 .capacity(courseOpenRequest.getCapacity())
                 .openSemester(courseOpenRequest.getOpenSemester())
@@ -63,8 +66,14 @@ public class CourseRestController {
 
     @PostMapping("/close")
     @Valid
-    public void close(@RequestParam("courseId") @NotNull Long courseId){
+    public void close(@RequestParam @NotNull Long courseId){
         Course course = courseRepository.findById(courseId).orElseThrow(NoExistEntityException::new);
         courseService.close(course);
+    }
+
+    @GetMapping("/list")
+    public Page<CourseResponse> courseList(Pageable pageable){
+        return courseRepository.findAll(pageable)
+                .map(CourseResponse::new);
     }
 }

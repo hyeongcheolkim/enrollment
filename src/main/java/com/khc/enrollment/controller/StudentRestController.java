@@ -39,8 +39,8 @@ public class StudentRestController {
     @PostMapping("/login")
     @Valid
     ResponseEntity<LoginResponse> login(
-            @RequestParam("loginId") @NotBlank String loginId,
-            @RequestParam("pw") @NotBlank String pw,
+            @RequestParam @NotBlank String loginId,
+            @RequestParam @NotBlank String pw,
             HttpServletRequest request) {
         Student student = studentService.login(loginId, pw).orElseThrow(NoExistEntityException::new);
 
@@ -82,7 +82,7 @@ public class StudentRestController {
 
     @PostMapping("/inactive")
     @Valid
-    void inactiveSubject(@RequestParam("studentId") @NotNull Long studentId) {
+    void inactiveSubject(@RequestParam @NotNull Long studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(NoExistEntityException::new);
 

@@ -39,7 +39,7 @@ public class SubjectRestController {
 
     @PostMapping("/inactive")
     @Valid
-    void inactiveSubject(@RequestParam("subjectId") @NotNull Long subjectId){
+    void inactiveSubject(@RequestParam @NotNull Long subjectId){
         Subject subject = subjectRepository.findById(subjectId)
                 .orElseThrow(NoExistEntityException::new);
 

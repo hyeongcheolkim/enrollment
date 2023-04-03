@@ -44,7 +44,7 @@ public class CourseOpenRequest {
     private List<CourseTime> courseTimes;
 
     @Nullable
-    private List<Long> prohibitedDepartmentIds;
+    private List<Long> allowedDepartments;
 
     @Nullable
     private List<MajorType> prohibitedMajorTypes;

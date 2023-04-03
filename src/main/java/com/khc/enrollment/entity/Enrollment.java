@@ -2,19 +2,15 @@ package com.khc.enrollment.entity;
 
 import com.khc.enrollment.entity.Course.Course;
 import com.khc.enrollment.entity.member.Student;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ParticipatedCourse extends Base {
+public class Enrollment extends Base {
     @Id
     @GeneratedValue
     private Long id;
@@ -26,4 +22,18 @@ public class ParticipatedCourse extends Base {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     Student student;
+
+    @Setter
+    private boolean isOnSemester = true;
+
+    @Setter
+    private ScoreType score;
+
+    @Builder
+    private Enrollment(Course course, Student student) {
+        this.course = course;
+        this.student = student;
+        course.getEnrollments().add(this);
+        student.getEnrollments().add(this);
+    }
 }

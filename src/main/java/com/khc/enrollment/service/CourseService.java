@@ -38,13 +38,11 @@ public class CourseService {
             final Integer endHour = courseTime.getEndHour();
 
             List<Course> allCourseByDay = courseRepository.findAllCourseByDay(day);
-            boolean duplicated = allCourseByDay.stream()
+            return allCourseByDay.stream()
                     .map(Course::getCourseTimes)
                     .flatMap(List::stream)
                     .anyMatch(e -> startHour < e.getStartHour() && e.getStartHour() < endHour
                             && startHour < e.getEndHour() && e.getEndHour() < endHour);
-            if(duplicated)
-                return true;
         }
         return false;
     }

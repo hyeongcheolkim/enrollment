@@ -1,9 +1,6 @@
 package com.khc.enrollment.entity.Course;
 
-import com.khc.enrollment.entity.Base;
-import com.khc.enrollment.entity.Department;
-import com.khc.enrollment.entity.MajorType;
-import com.khc.enrollment.entity.Subject;
+import com.khc.enrollment.entity.*;
 import com.khc.enrollment.entity.member.Professor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,9 +45,12 @@ public class Course extends Base {
     private List<CourseTime> courseTimes;
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<Department> prohibitedDepartments;
+    private List<Department> allowedDepartments;
 
     @ElementCollection(fetch = FetchType.LAZY)
     @Enumerated(EnumType.STRING)
     private List<MajorType> prohibitedMajorTypes;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    private List<Enrollment> enrollments;
 }
