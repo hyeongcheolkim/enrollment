@@ -7,11 +7,13 @@ import com.khc.enrollment.service.dto.SubjectMakeDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.modelmapper.ModelMapper;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class SubjectService {
 
     private final SubjectRepository subjectRepository;

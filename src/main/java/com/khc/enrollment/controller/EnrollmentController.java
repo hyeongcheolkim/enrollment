@@ -5,16 +5,21 @@ import com.khc.enrollment.controller.response.OnSemesterEnrollmentResponse;
 import com.khc.enrollment.entity.Course.Course;
 import com.khc.enrollment.entity.Enrollment;
 import com.khc.enrollment.entity.ScoreType;
+import com.khc.enrollment.entity.member.Professor;
 import com.khc.enrollment.entity.member.Student;
 import com.khc.enrollment.exception.exceptoin.NoExistEntityException;
 import com.khc.enrollment.repository.CourseRepository;
 import com.khc.enrollment.repository.EnrollmentRepository;
+import com.khc.enrollment.repository.ProfessorRepository;
 import com.khc.enrollment.repository.StudentRepository;
 import com.khc.enrollment.service.EnrollmentService;
+import com.khc.enrollment.session.SessionConst;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.RequestEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,6 +29,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/enroll")
 @RequiredArgsConstructor
+@Transactional
 public class EnrollmentController {
 
     private final EnrollmentService enrollmentService;
@@ -31,11 +37,12 @@ public class EnrollmentController {
     private final EnrollmentRepository enrollmentRepository;
     private final StudentRepository studentRepository;
     private final CourseRepository courseRepository;
+    private final ProfessorRepository professorRepository;
 
     @PostMapping("/enroll")
     @Valid
     public void enroll(
-            @RequestParam @NotNull Long studentId,
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT) Long studentId,
             @RequestParam @NotNull Long courseId) {
         Student student = studentRepository.findById(studentId).orElseThrow(NoExistEntityException::new);
         Course course = courseRepository.findById(courseId).orElseThrow(NoExistEntityException::new);
@@ -45,20 +52,30 @@ public class EnrollmentController {
 
     @PostMapping("/drop")
     @Valid
-    public void drop(@RequestParam @NotNull Long enrollmentId) {
-        Enrollment enrollment = enrollmentRepository.findById(enrollmentId).orElseThrow(NoExistEntityException::new);
+    public void drop(
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT) Long studentId,
+            @RequestParam @NotNull Long enrollmentId
+    ) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(NoExistEntityException::new);
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(NoExistEntityException::new);
 
-        enrollmentService.drop(enrollment);
+        enrollmentService.drop(student, enrollment);
     }
 
     @PostMapping("/grade")
     @Valid
     public void grade(
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGINP_PROFESSOR) Long professorId,
             @RequestParam @NotNull Long enrollmentId,
             @RequestParam @NotNull ScoreType scoreType) {
-        Enrollment enrollment = enrollmentRepository.findById(enrollmentId).orElseThrow(NoExistEntityException::new);
+        Professor professor = professorRepository.findById(professorId)
+                .orElseThrow(NoExistEntityException::new);
+        Enrollment enrollment = enrollmentRepository.findById(enrollmentId)
+                .orElseThrow(NoExistEntityException::new);
 
-        enrollmentService.grade(enrollment, scoreType);
+        enrollmentService.grade(professor, enrollment, scoreType);
     }
 
     @GetMapping("/score")

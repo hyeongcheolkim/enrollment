@@ -10,7 +10,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Subject extends Base {
+public class Subject  {
     @Id
     @GeneratedValue
     private Long id;
@@ -24,9 +24,6 @@ public class Subject extends Base {
     @Builder.Default
     @Setter
     private Boolean activated = true;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    private Subject prerequisite;
 
     @Enumerated(EnumType.STRING)
     private SubjectType type;

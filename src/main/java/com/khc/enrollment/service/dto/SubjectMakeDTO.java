@@ -16,7 +16,5 @@ public class SubjectMakeDTO {
 
     private Integer code;
 
-    private Subject prerequisite;
-
     private SubjectType type;
 }

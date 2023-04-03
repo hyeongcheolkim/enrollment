@@ -1,7 +1,7 @@
 package com.khc.enrollment.session;
 
 public abstract class SessionConst {
-    static public String loginStudent = "LOGIN_STUDENT";
-    static public String loginProfessor = "LOGIN_PROFESSOR";
-    static public String loginAdmin = "LOGIN_ADMIN";
+    static public final String LOGIN_STUDENT = "LOGIN_STUDENT";
+    static public final String LOGINP_PROFESSOR = "LOGIN_PROFESSOR";
+    static public final String loginAdmin = "LOGIN_ADMIN";
 }

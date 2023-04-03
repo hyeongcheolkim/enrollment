@@ -15,7 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Course extends Base {
+public class Course {
     @Id
     @GeneratedValue
     private Long id;
@@ -44,7 +44,7 @@ public class Course extends Base {
     @ElementCollection(fetch = FetchType.LAZY)
     private List<CourseTime> courseTimes;
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY)
     private List<Department> allowedDepartments;
 
     @ElementCollection(fetch = FetchType.LAZY)

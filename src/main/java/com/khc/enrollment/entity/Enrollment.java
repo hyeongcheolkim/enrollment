@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Enrollment extends Base {
+public class Enrollment  {
     @Id
     @GeneratedValue
     private Long id;

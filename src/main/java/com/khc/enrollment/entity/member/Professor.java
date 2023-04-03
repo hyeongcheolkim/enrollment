@@ -1,6 +1,5 @@
 package com.khc.enrollment.entity.member;
 
-import com.khc.enrollment.entity.Base;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,7 +15,7 @@ import javax.persistence.Id;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Professor extends Base {
+public class Professor  {
     @Id
     @GeneratedValue
     private Long id;

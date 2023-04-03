@@ -7,9 +7,11 @@ import com.khc.enrollment.service.dto.CreateDepartmentDTO;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class DepartmentService {
 
     private final DepartmentRepository departmentRepository;

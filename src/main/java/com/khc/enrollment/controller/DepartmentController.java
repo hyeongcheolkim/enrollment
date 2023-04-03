@@ -9,6 +9,7 @@ import com.khc.enrollment.service.DepartmentService;
 import com.khc.enrollment.service.dto.CreateDepartmentDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.modelmapper.ModelMapper;
 
@@ -21,6 +22,7 @@ import java.util.stream.Stream;
 @RestController
 @RequestMapping("/api/department")
 @RequiredArgsConstructor
+@Transactional
 public class DepartmentController {
 
     private final DepartmentService departmentService;

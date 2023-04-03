@@ -4,9 +4,11 @@ import com.khc.enrollment.entity.Subject;
 import com.khc.enrollment.entity.SubjectType;
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Null;
 
 @Data
 public class SubjectMakeRequest {
@@ -18,9 +20,6 @@ public class SubjectMakeRequest {
 
     @NotNull
     private Integer code;
-
-    @NotNull
-    private Long prerequisiteId;
 
     @NotNull
     private SubjectType type;

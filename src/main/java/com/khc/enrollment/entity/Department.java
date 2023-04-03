@@ -11,7 +11,7 @@ import javax.persistence.Id;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Department extends Base {
+public class Department {
     @Id
     @GeneratedValue
     private Long id;

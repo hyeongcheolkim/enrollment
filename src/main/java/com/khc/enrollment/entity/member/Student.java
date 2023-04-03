@@ -15,7 +15,7 @@ import java.util.Map;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Student extends Base {
+public class Student  {
     @Id
     @GeneratedValue
     private Long id;
