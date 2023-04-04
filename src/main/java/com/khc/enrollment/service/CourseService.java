@@ -50,7 +50,8 @@ public class CourseService {
                     .map(Course::getCourseTimes)
                     .flatMap(List::stream)
                     .anyMatch(e -> startHour < e.getStartHour() && e.getStartHour() < endHour
-                            && startHour < e.getEndHour() && e.getEndHour() < endHour);
+                            || startHour < e.getEndHour() && e.getEndHour() < endHour
+                    || startHour.equals(e.getStartHour()) && endHour.equals(e.getEndHour()));
         }
         return false;
     }
