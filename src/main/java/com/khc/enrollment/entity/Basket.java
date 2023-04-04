@@ -5,6 +5,7 @@ import com.khc.enrollment.entity.member.Student;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
 @Getter
@@ -28,5 +29,18 @@ public class Basket {
         this.student = student;
         this.course = course;
         student.getBaskets().add(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Basket basket = (Basket) o;
+        return Objects.equals(id, basket.id) && Objects.equals(student, basket.student) && Objects.equals(course, basket.course);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, student, course);
     }
 }
