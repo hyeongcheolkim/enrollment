@@ -11,7 +11,6 @@ import javax.persistence.Id;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@ToString
 public class Department {
     @Id
     @GeneratedValue

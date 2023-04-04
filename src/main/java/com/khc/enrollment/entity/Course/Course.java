@@ -2,10 +2,7 @@ package com.khc.enrollment.entity.Course;
 
 import com.khc.enrollment.entity.*;
 import com.khc.enrollment.entity.member.Professor;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -46,6 +43,10 @@ public class Course {
     @JoinColumn
     private Professor professor;
 
+    @Builder.Default
+    @Setter
+    private Boolean activated = true;
+
     @ElementCollection(fetch = FetchType.LAZY)
     @Builder.Default
     private List<CourseTime> courseTimes = new ArrayList<>();
@@ -62,4 +63,6 @@ public class Course {
     @OneToMany(fetch = FetchType.LAZY)
     @Builder.Default
     private List<Enrollment> enrollments = new ArrayList<>();
+
+
 }

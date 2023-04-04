@@ -31,7 +31,7 @@ public class ClassroomService {
                 .anyMatch(e -> e.getCode().equals(code));
     }
 
-    public void delete(Classroom classroom){
-        classroomRepository.delete(classroom);
+    public void inactivate(Classroom classroom){
+        classroom.setActivated(false);
     }
 }

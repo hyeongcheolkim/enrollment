@@ -23,6 +23,10 @@ public class Classroom {
 
     private Integer code;
 
+    @Builder.Default
+    @Setter
+    private Boolean activated = true;
+
     @OneToMany
     @Builder.Default
     List<Course> courses = new ArrayList<>();

@@ -40,12 +40,12 @@ public class ClassroomController {
         classroomService.create(createClassroomDTO);
     }
 
-    @PostMapping("/delete")
+    @PostMapping("/inactivate")
     @Valid
     public void deleteClassroom(@RequestParam @NotNull Long classroomId){
         Classroom classroom = classroomRepository.findById(classroomId)
                 .orElseThrow(NoExistEntityException::new);
 
-        classroomService.delete(classroom);
+        classroomService.inactivate(classroom);
     }
 }

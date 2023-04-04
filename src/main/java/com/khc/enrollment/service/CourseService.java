@@ -36,7 +36,7 @@ public class CourseService {
         if (!course.getProfessor().equals(professor))
             throw new NotAuthenticatedException();
 
-        courseRepository.delete(course);
+        course.setActivated(false);
     }
 
     private boolean isDuplicatedCourseTimeAndClassroom(List<CourseTime> courseTimes, Classroom classroom) {
@@ -48,6 +48,7 @@ public class CourseService {
 
             List<Course> allCourseByDay = courseRepository.findAllCourseByDay(day);
             return allCourseByDay.stream()
+                    .filter(Course::getActivated)
                     .filter(e -> e.getClassroom().equals(classroom))
                     .map(Course::getCourseTimes)
                     .flatMap(List::stream)
