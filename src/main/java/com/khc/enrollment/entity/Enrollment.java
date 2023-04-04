@@ -5,6 +5,7 @@ import com.khc.enrollment.entity.member.Student;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 
 @Entity
 @Getter

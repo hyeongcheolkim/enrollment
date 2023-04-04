@@ -1,12 +1,11 @@
 package com.khc.enrollment.entity.member;
 
 import com.khc.enrollment.entity.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -23,9 +22,12 @@ public class Student  {
     @Embedded
     private MemberInfo memberInfo;
 
-    @OneToMany(fetch = FetchType.LAZY)
-    private Map<MajorType, Department> majors;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @Setter
+    @Builder.Default
+    private Map<MajorType, Department> majors = new HashMap<>();
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<Enrollment> enrollments;
+    @Builder.Default
+    private List<Enrollment> enrollments = new ArrayList<>();
 }

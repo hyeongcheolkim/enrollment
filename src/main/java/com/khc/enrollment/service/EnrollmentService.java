@@ -31,7 +31,7 @@ public class EnrollmentService {
         if (isFullCapacity(course))
             throw new RuntimeException("코스 인원이 꽉 찼습니다. 수강신청할 수 없습니다");
         if (isNotQualified(student, course))
-            throw new RuntimeException("수강 신청 자격이 없습니다");
+            throw new NotAuthenticatedException("수강 신청 자격이 없습니다");
         if (isDuplicatedTime(student, course))
             throw new RuntimeException("신청한 과목의 수업시간이 기존 시간표와 중복됩니다");
         if (isDuplicatedEnroll(student, course))
@@ -79,6 +79,7 @@ public class EnrollmentService {
         List<Enrollment> enrollments = enrollmentRepository.findAllByStudent(student);
 
         Map<Day, List<CourseTime>> courseTimeGroupByDay = enrollments.stream()
+                .filter(Enrollment::isOnSemester)
                 .map(Enrollment::getCourse)
                 .map(Course::getCourseTimes)
                 .flatMap(List::stream)
@@ -106,14 +107,14 @@ public class EnrollmentService {
         List<Department> allowedDepartments = course.getAllowedDepartments();
         List<MajorType> prohibitedMajorTypes = course.getProhibitedMajorTypes();
 
-        for (var majorType : MajorType.values()) {
-            if (prohibitedMajorTypes.contains(majorType))
-                continue;
-            if (!majors.containsKey(majorType))
-                continue;
-            if (!allowedDepartments.contains(majors.get(majorType)))
-                continue;
-            return false;
+        for(var e : majors.entrySet()){
+            MajorType studentMajorType = e.getKey();
+            Department studentDepartment = e.getValue();
+
+            if(prohibitedMajorTypes.contains(studentMajorType))
+                return true;
+            if(allowedDepartments.contains(studentDepartment))
+                return false;
         }
         return true;
     }
@@ -127,9 +128,8 @@ public class EnrollmentService {
 
     private boolean isDuplicatedEnroll(Student student, Course course) {
         return student.getEnrollments().stream()
+                .filter(e -> e.getCourse().getSubject().getCode().equals(course.getSubject().getCode()))
                 .filter(e -> !e.isOnSemester())
-                .filter(e -> e.getScore().getDigit() < ScoreType.B_ZERO.getDigit())
-                .map(e -> e.getCourse().getSubject().getCode())
-                .anyMatch(e -> e.equals(course.getSubject().getCode()));
+                .anyMatch(e -> e.getScore().getDigit() >= ScoreType.B_ZERO.getDigit());
     }
 }

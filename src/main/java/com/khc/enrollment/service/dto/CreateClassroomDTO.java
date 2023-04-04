@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class CreateDepartmentDTO {
+public class CreateClassroomDTO {
     private String name;
     private Integer code;
 }
