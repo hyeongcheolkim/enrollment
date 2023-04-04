@@ -17,12 +17,12 @@ public class DepartmentService {
     private final DepartmentRepository departmentRepository;
     private final ModelMapper modelMapper;
 
-    public void create(CreateDepartmentDTO createDepartmentDTO){
+    public Department create(CreateDepartmentDTO createDepartmentDTO){
         if(isDuplicatedDepartment(createDepartmentDTO.getCode()))
             throw new DuplicatedEntityException("학과 코드가 중복됩니다");
 
         Department department = modelMapper.map(createDepartmentDTO, Department.class);
-        departmentRepository.save(department);
+        return departmentRepository.save(department);
     }
 
     public void inactive(Department department){

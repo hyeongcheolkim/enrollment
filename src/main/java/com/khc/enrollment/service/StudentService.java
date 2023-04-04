@@ -30,7 +30,7 @@ public class StudentService {
                 .findAny();
     }
 
-    public void register(StudentRegisterDTO studentRegisterDTO) {
+    public Student register(StudentRegisterDTO studentRegisterDTO) {
         if(isDuplicatedLoginId(studentRegisterDTO.getLoginId()))
             throw new DuplicatedEntityException();
 
@@ -44,7 +44,7 @@ public class StudentService {
                         .build())
                 .majors(new HashMap<>(Map.of(MajorType.ORIGIN, studentRegisterDTO.getOriginDepartment())))
                 .build();
-        studentRepository.save(student);
+        return studentRepository.save(student);
     }
 
     private boolean isDuplicatedLoginId(String loginId) {

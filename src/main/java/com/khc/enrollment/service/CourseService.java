@@ -23,13 +23,13 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final ModelMapper modelMapper;
 
-    public void open(CourseOpenDTO courseOpenDTO) {
+    public Course open(CourseOpenDTO courseOpenDTO) {
         if (isDuplicatedCourseTime(courseOpenDTO.getCourseTimes()))
             throw new RuntimeException("선택한 코스시간표가 이미 존재하는 다른 코스시간표와 겹칩니다.");
 
         Course course = modelMapper
                 .map(courseOpenDTO, Course.class);
-        courseRepository.save(course);
+        return courseRepository.save(course);
     }
 
     public void close(Course course, Professor professor) {

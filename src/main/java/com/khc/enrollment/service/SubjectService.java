@@ -19,12 +19,12 @@ public class SubjectService {
     private final SubjectRepository subjectRepository;
     private final ModelMapper modelMapper;
 
-    public void make(SubjectMakeDTO subjectMakeDTO){
+    public Subject make(SubjectMakeDTO subjectMakeDTO){
         if(isDuplicatedSubject(subjectMakeDTO.getCode()))
             throw new DuplicatedEntityException("과목코드가 중복됩니다");
 
         Subject subject = modelMapper.map(subjectMakeDTO, Subject.class);
-        subjectRepository.save(subject);
+        return subjectRepository.save(subject);
     }
 
     public void inactive(Subject subject){

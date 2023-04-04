@@ -26,7 +26,7 @@ public class EnrollmentService {
 
     private final EnrollmentRepository enrollmentRepository;
 
-    public void enroll(Student student, Course course) {
+    public Enrollment enroll(Student student, Course course) {
 
         if (isFullCapacity(course))
             throw new RuntimeException("코스 인원이 꽉 찼습니다. 수강신청할 수 없습니다");
@@ -46,7 +46,7 @@ public class EnrollmentService {
                 .course(course)
                 .build();
 
-        enrollmentRepository.save(enrollment);
+        return enrollmentRepository.save(enrollment);
     }
 
     public void drop(Student student, Enrollment enrollment) {

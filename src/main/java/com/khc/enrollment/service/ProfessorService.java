@@ -27,7 +27,7 @@ public class ProfessorService {
                 .findAny();
     }
 
-    public void register(ProfessorRegisterDTO professorRegisterDTO) {
+    public Professor register(ProfessorRegisterDTO professorRegisterDTO) {
         if(isDuplicatedLoginId(professorRegisterDTO.getLoginId()))
             throw new DuplicatedEntityException();
 
@@ -41,7 +41,7 @@ public class ProfessorService {
                                 .build())
                 .build();
 
-        professorRepository.save(professor);
+        return professorRepository.save(professor);
     }
 
     private boolean isDuplicatedLoginId(String loginId) {
