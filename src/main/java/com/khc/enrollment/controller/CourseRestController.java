@@ -2,15 +2,13 @@ package com.khc.enrollment.controller;
 
 import com.khc.enrollment.controller.request.CourseOpenRequest;
 import com.khc.enrollment.controller.response.CourseResponse;
+import com.khc.enrollment.entity.Classroom;
 import com.khc.enrollment.entity.Course.Course;
 import com.khc.enrollment.entity.Department;
 import com.khc.enrollment.entity.Subject;
 import com.khc.enrollment.entity.member.Professor;
 import com.khc.enrollment.exception.exceptoin.NoExistEntityException;
-import com.khc.enrollment.repository.CourseRepository;
-import com.khc.enrollment.repository.DepartmentRepository;
-import com.khc.enrollment.repository.ProfessorRepository;
-import com.khc.enrollment.repository.SubjectRepository;
+import com.khc.enrollment.repository.*;
 import com.khc.enrollment.service.CourseService;
 import com.khc.enrollment.service.dto.CourseOpenDTO;
 import com.khc.enrollment.session.SessionConst;
@@ -38,6 +36,7 @@ public class CourseRestController {
     private final SubjectRepository subjectRepository;
     private final DepartmentRepository departmentRepository;
     private final ProfessorRepository professorRepository;
+    private final ClassroomRepository classroomRepository;
 
     @PostMapping("/open")
     public void openCourse(
@@ -53,6 +52,8 @@ public class CourseRestController {
         List<Department> allowedDepartments = courseOpenRequest.getAllowedDepartmentIds().stream()
                 .map(e -> departmentRepository.findById(e).orElseThrow(NoExistEntityException::new))
                 .collect(Collectors.toList());
+        Classroom classroom = classroomRepository.findById(courseOpenRequest.getClassroomId())
+                .orElseThrow(NoExistEntityException::new);
 
         CourseOpenDTO courseOpenDTO = CourseOpenDTO.builder()
                 .subject(subject)
@@ -64,6 +65,7 @@ public class CourseRestController {
                 .openSemester(courseOpenRequest.getOpenSemester())
                 .openYear(courseOpenRequest.getOpenYear())
                 .division(courseOpenRequest.getDivision())
+                .classroom(classroom)
                 .studentYear(courseOpenRequest.getStudentYear())
                 .prohibitedMajorTypes(courseOpenRequest.getProhibitedMajorTypes())
                 .build();

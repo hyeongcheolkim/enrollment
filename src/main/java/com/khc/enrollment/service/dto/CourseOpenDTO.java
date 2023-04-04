@@ -1,5 +1,6 @@
 package com.khc.enrollment.service.dto;
 
+import com.khc.enrollment.entity.Classroom;
 import com.khc.enrollment.entity.Course.CourseTime;
 import com.khc.enrollment.entity.Department;
 import com.khc.enrollment.entity.MajorType;
@@ -8,6 +9,7 @@ import com.khc.enrollment.entity.member.Professor;
 import lombok.Builder;
 import lombok.Data;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -26,6 +28,8 @@ public class CourseOpenDTO {
     private Integer openSemester;
 
     private Integer division;
+
+    private Classroom classroom;
 
     private Professor professor;
 

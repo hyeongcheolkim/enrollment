@@ -43,6 +43,8 @@ public class CourseOpenRequest {
     @NotNull
     private Integer division;
 
+    private Long classroomId;
+
     @Size(min = 1)
     private List<CourseTime> courseTimes;
 

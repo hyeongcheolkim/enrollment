@@ -1,5 +1,6 @@
 package com.khc.enrollment.service;
 
+import com.khc.enrollment.entity.Classroom;
 import com.khc.enrollment.entity.Course.Course;
 import com.khc.enrollment.entity.Course.CourseTime;
 import com.khc.enrollment.entity.Course.Day;
@@ -13,7 +14,6 @@ import org.modelmapper.ModelMapper;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 @Service
 @RequiredArgsConstructor
@@ -24,11 +24,11 @@ public class CourseService {
     private final ModelMapper modelMapper;
 
     public Course open(CourseOpenDTO courseOpenDTO) {
-        if (isDuplicatedCourseTime(courseOpenDTO.getCourseTimes()))
-            throw new RuntimeException("선택한 코스시간표가 이미 존재하는 다른 코스시간표와 겹칩니다.");
+        if (isDuplicatedCourseTimeAndClassroom(courseOpenDTO.getCourseTimes(), courseOpenDTO.getClassroom()))
+            throw new RuntimeException("선택한 교실과 시간이 다른 코스와 겹칩니다.");
 
-        Course course = modelMapper
-                .map(courseOpenDTO, Course.class);
+        Course course = modelMapper.map(courseOpenDTO, Course.class);
+
         return courseRepository.save(course);
     }
 
@@ -39,7 +39,8 @@ public class CourseService {
         courseRepository.delete(course);
     }
 
-    private boolean isDuplicatedCourseTime(List<CourseTime> courseTimes) {
+    private boolean isDuplicatedCourseTimeAndClassroom(List<CourseTime> courseTimes, Classroom classroom) {
+
         for (final var courseTime : courseTimes) {
             final Day day = courseTime.getDay();
             final Integer startHour = courseTime.getStartHour();
@@ -47,6 +48,7 @@ public class CourseService {
 
             List<Course> allCourseByDay = courseRepository.findAllCourseByDay(day);
             return allCourseByDay.stream()
+                    .filter(e -> e.getClassroom().equals(classroom))
                     .map(Course::getCourseTimes)
                     .flatMap(List::stream)
                     .anyMatch(e -> e.getStartHour() <= startHour && startHour < e.getEndHour()

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -39,18 +40,26 @@ public class Course {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
+    private Classroom classroom;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private Professor professor;
 
     @ElementCollection(fetch = FetchType.LAZY)
-    private List<CourseTime> courseTimes;
+    @Builder.Default
+    private List<CourseTime> courseTimes = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
-    private List<Department> allowedDepartments;
+    @Builder.Default
+    private List<Department> allowedDepartments = new ArrayList<>();
 
     @ElementCollection(fetch = FetchType.LAZY)
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private List<MajorType> prohibitedMajorTypes;
+    private List<MajorType> prohibitedMajorTypes = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY)
-    private List<Enrollment> enrollments;
+    @Builder.Default
+    private List<Enrollment> enrollments = new ArrayList<>();
 }
