@@ -24,7 +24,7 @@ public class Enrollment  {
     Student student;
 
     @Setter
-    private boolean isOnSemester = true;
+    private boolean onSemester = true;
 
     @Setter
     private ScoreType score;
