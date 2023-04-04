@@ -32,8 +32,8 @@ public class CourseService {
         courseRepository.save(course);
     }
 
-    public void close(Course course, Professor professor){
-        if(!course.getProfessor().equals(professor))
+    public void close(Course course, Professor professor) {
+        if (!course.getProfessor().equals(professor))
             throw new NotAuthenticatedException();
 
         courseRepository.delete(course);
@@ -49,9 +49,10 @@ public class CourseService {
             return allCourseByDay.stream()
                     .map(Course::getCourseTimes)
                     .flatMap(List::stream)
-                    .anyMatch(e -> startHour < e.getStartHour() && e.getStartHour() < endHour
-                            || startHour < e.getEndHour() && e.getEndHour() < endHour
-                    || startHour.equals(e.getStartHour()) && endHour.equals(e.getEndHour()));
+                    .anyMatch(e -> e.getStartHour() <= startHour && startHour < e.getEndHour()
+                            || e.getStartHour() < endHour && endHour <= e.getEndHour()
+                            || startHour <= e.getStartHour() && e.getStartHour() < endHour
+                            || startHour < e.getEndHour() && e.getEndHour() <= endHour);
         }
         return false;
     }
