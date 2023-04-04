@@ -30,4 +30,8 @@ public class Student  {
     @OneToMany(fetch = FetchType.LAZY)
     @Builder.Default
     private List<Enrollment> enrollments = new ArrayList<>();
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @Builder.Default
+    private List<Basket> baskets = new ArrayList<>();
 }

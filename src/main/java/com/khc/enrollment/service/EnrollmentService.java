@@ -1,12 +1,9 @@
 package com.khc.enrollment.service;
 
+import com.khc.enrollment.entity.*;
 import com.khc.enrollment.entity.Course.Course;
 import com.khc.enrollment.entity.Course.CourseTime;
 import com.khc.enrollment.entity.Course.Day;
-import com.khc.enrollment.entity.Department;
-import com.khc.enrollment.entity.Enrollment;
-import com.khc.enrollment.entity.MajorType;
-import com.khc.enrollment.entity.ScoreType;
 import com.khc.enrollment.entity.member.Professor;
 import com.khc.enrollment.entity.member.Student;
 import com.khc.enrollment.exception.exceptoin.NotAuthenticatedException;
@@ -15,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,11 +47,27 @@ public class EnrollmentService {
         return enrollmentRepository.save(enrollment);
     }
 
+    public Map<Basket, Boolean> enrollBaskets(Student student, List<Basket> baskets){
+        var ret = new HashMap<Basket, Boolean>();
+
+        for(var basket : baskets){
+            try{
+                Enrollment enrollment = this.enroll(student, basket.getCourse());
+                ret.put(basket, true);
+            }catch(Exception e){
+                ret.put(basket, false);
+            }
+        }
+
+        return ret;
+    }
+
     public void drop(Student student, Enrollment enrollment) {
         if (!student.equals(enrollment.getStudent()))
             throw new NotAuthenticatedException();
 
         enrollmentRepository.delete(enrollment);
+        enrollmentRepository.flush();
     }
 
     public void grade(Professor professor, Enrollment enrollment, ScoreType scoreType) {
@@ -122,8 +136,8 @@ public class EnrollmentService {
     private boolean isDuplicatedOnSemesterEnroll(Course course, List<Enrollment> enrollments) {
         return enrollments.stream()
                 .filter(Enrollment::isOnSemester)
-                .map(Enrollment::getCourse)
-                .anyMatch(e -> e.equals(course));
+                .map(e -> e.getCourse().getSubject())
+                .anyMatch(e -> e.equals(course.getSubject()));
     }
 
     private boolean isDuplicatedEnroll(Student student, Course course) {

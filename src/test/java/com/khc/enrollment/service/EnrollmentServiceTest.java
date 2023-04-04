@@ -21,6 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,6 +46,8 @@ class EnrollmentServiceTest {
     ProfessorService professorService;
     @Autowired
     EnrollmentRepository enrollmentRepository;
+    @Autowired
+    BasketService basketService;
 
     @Test
     void 코스수강정원이_꽉찬_코스는_수강신청할_수_없다() {
@@ -346,5 +349,94 @@ class EnrollmentServiceTest {
 
         Optional<Enrollment> res = enrollmentRepository.findById(enroll1Id);
         Assertions.assertThat(res).isEmpty();
+    }
+
+    @Test
+    void 장바구니_일괄신청(){
+        final CreateDepartmentDTO createDepartmentDTO = CreateDepartmentDTO.builder().build();
+        final Department department = departmentService.create(createDepartmentDTO);
+        final Professor professor = professorService.register(new ProfessorRegisterDTO());
+        final StudentRegisterDTO studentRegisterDTO = StudentRegisterDTO.builder()
+                .originDepartment(department)
+                .build();
+        Student student = studentService.register(studentRegisterDTO);
+        final Classroom classroom1 = Classroom.builder()
+                .name("정보기술관")
+                .code(200)
+                .build();
+        final Classroom classroom2 = Classroom.builder()
+                .name("백주년기념관")
+                .code(300)
+                .build();
+        classroomRepository.saveAll(List.of(classroom1, classroom2));
+
+        final Subject subject1 = Subject.builder()
+                .credit(3)
+                .code(300)
+                .name("C++")
+                .build();
+        subjectRepository.save(subject1);
+
+        final Subject subject2 = Subject.builder()
+                .credit(3)
+                .code(301)
+                .name("C")
+                .build();
+        subjectRepository.save(subject2);
+
+        final CourseOpenDTO courseOpenDTO1 = CourseOpenDTO.builder()
+                .courseTimes(List.of(CourseTime.builder()
+                        .day(Day.MON)
+                        .startHour(9)
+                        .endHour(13)
+                        .build()))
+                .classroom(classroom1)
+                .capacity(3)
+                .division(1)
+                .professor(professor)
+                .subject(subject1)
+                .allowedDepartments(List.of(department))
+                .build();
+        final CourseOpenDTO courseOpenDTO2 = CourseOpenDTO.builder()
+                .courseTimes(List.of(CourseTime.builder()
+                        .day(Day.TUESDAY)
+                        .startHour(8)
+                        .endHour(15)
+                        .build()))
+                .classroom(classroom2)
+                .capacity(3)
+                .subject(subject2)
+                .division(1)
+                .professor(professor)
+                .allowedDepartments(List.of(department))
+                .build();
+        final CourseOpenDTO courseOpenDTO3 = CourseOpenDTO.builder()
+                .courseTimes(List.of(CourseTime.builder()
+                        .day(Day.MON)
+                        .startHour(15)
+                        .endHour(16)
+                        .build()))
+                .classroom(classroom2)
+                .capacity(3)
+                .professor(professor)
+                .subject(subject2)
+                .division(2)
+                .allowedDepartments(List.of(department))
+                .build();
+
+        final Course course1 = courseService.open(courseOpenDTO1);
+        final Course course2 = courseService.open(courseOpenDTO2);
+        final Course course3 = courseService.open(courseOpenDTO3);
+
+        final Basket basket1 = basketService.put(student, course1);
+        final Basket basket2 = basketService.put(student, course2);
+        final Basket basket3 = basketService.put(student, course3);
+
+        Map<Basket, Boolean> res = enrollmentService.enrollBaskets(student, student.getBaskets());
+
+        Assertions.assertThat(res.get(basket1)).isTrue();
+        Assertions.assertThat(res.get(basket2)).isTrue();
+        Assertions.assertThat(res.get(basket3)).isFalse();
+
     }
 }

@@ -1,10 +1,12 @@
 package com.khc.enrollment.controller;
 
 import com.khc.enrollment.controller.request.StudentRegisterRequest;
+import com.khc.enrollment.controller.response.BasketResponse;
 import com.khc.enrollment.controller.response.LoginResponse;
 import com.khc.enrollment.entity.Department;
 import com.khc.enrollment.entity.member.Student;
 import com.khc.enrollment.exception.exceptoin.NoExistEntityException;
+import com.khc.enrollment.repository.BasketRepository;
 import com.khc.enrollment.repository.DepartmentRepository;
 import com.khc.enrollment.repository.StudentRepository;
 import com.khc.enrollment.service.StudentService;
@@ -12,6 +14,8 @@ import com.khc.enrollment.service.dto.StudentRegisterDTO;
 import com.khc.enrollment.session.SessionConst;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +36,7 @@ public class StudentRestController {
 
     private final StudentRepository studentRepository;
     private final DepartmentRepository departmentRepository;
+    private final BasketRepository basketRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -90,5 +95,16 @@ public class StudentRestController {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(NoExistEntityException::new);
         studentService.inactive(student);
+    }
+
+    @GetMapping("/basket")
+    Page<BasketResponse> baskets(
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT) Long studentId,
+            Pageable pageable) {
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(NoExistEntityException::new);
+
+        return basketRepository.findAllByStudent(student, pageable)
+                .map(BasketResponse::new);
     }
 }
