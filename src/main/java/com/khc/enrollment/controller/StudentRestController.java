@@ -42,6 +42,7 @@ public class StudentRestController {
             @RequestParam @NotBlank String pw,
             HttpServletRequest request) {
         Student student = studentService.login(loginId, pw).orElseThrow(NoExistEntityException::new);
+        logoutStudent(request);
 
         HttpSession session = request.getSession(true);
         session.setAttribute(SessionConst.LOGIN_STUDENT, student.getId());
@@ -55,6 +56,10 @@ public class StudentRestController {
 
     @PostMapping("/logout")
     void logout(HttpServletRequest request) {
+        logoutStudent(request);
+    }
+
+    private void logoutStudent(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null)
             return;
