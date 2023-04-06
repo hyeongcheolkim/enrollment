@@ -1,5 +1,9 @@
 package com.khc.enrollment.controller;
 
+import com.khc.enrollment.aop.annotation.PermitAdmin;
+import com.khc.enrollment.aop.annotation.PermitAnyLogin;
+import com.khc.enrollment.aop.annotation.PermitProfessor;
+import com.khc.enrollment.aop.annotation.PermitStudent;
 import com.khc.enrollment.controller.request.CreateDepartmentRequest;
 import com.khc.enrollment.controller.response.DepartmentListResponse;
 import com.khc.enrollment.entity.Department;
@@ -17,7 +21,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/department")
@@ -31,7 +34,7 @@ public class DepartmentController {
 
     private final ModelMapper modelMapper;
 
-
+    @PermitAdmin
     @PostMapping("/create")
     public void createDepartment(@RequestBody @Valid CreateDepartmentRequest createDepartmentRequest) {
         CreateDepartmentDTO createDepartmentDTO =
@@ -40,6 +43,7 @@ public class DepartmentController {
         departmentService.create(createDepartmentDTO);
     }
 
+    @PermitAdmin
     @PostMapping("/inactivate")
     @Valid
     public void inactivateDepartment(@RequestParam @NotNull Long departmentId) {
@@ -49,6 +53,7 @@ public class DepartmentController {
         departmentService.inactive(department);
     }
 
+    @PermitAnyLogin
     @GetMapping("/list")
     public ResponseEntity<DepartmentListResponse> departmentList() {
         List<Department> departments = departmentRepository.findAll().stream()

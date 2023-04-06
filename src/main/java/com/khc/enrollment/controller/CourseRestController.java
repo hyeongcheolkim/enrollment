@@ -1,5 +1,7 @@
 package com.khc.enrollment.controller;
 
+import com.khc.enrollment.aop.annotation.PermitAnyLogin;
+import com.khc.enrollment.aop.annotation.PermitProfessor;
 import com.khc.enrollment.controller.request.CourseOpenRequest;
 import com.khc.enrollment.controller.response.CourseResponse;
 import com.khc.enrollment.entity.Classroom;
@@ -38,9 +40,10 @@ public class CourseRestController {
     private final ProfessorRepository professorRepository;
     private final ClassroomRepository classroomRepository;
 
+    @PermitProfessor
     @PostMapping("/open")
     public void openCourse(
-            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGINP_PROFESSOR) Long professorId,
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR) Long professorId,
             @RequestBody @Valid CourseOpenRequest courseOpenRequest
     ) {
         Professor professor = professorRepository.findById(professorId)
@@ -73,10 +76,11 @@ public class CourseRestController {
         courseService.open(courseOpenDTO);
     }
 
+    @PermitProfessor
     @PostMapping("/close")
     @Valid
     public void close(
-            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGINP_PROFESSOR) Long professorId,
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR) Long professorId,
             @RequestParam @NotNull Long courseId
     ){
         Professor professor = professorRepository.findById(professorId)
@@ -87,6 +91,7 @@ public class CourseRestController {
         courseService.close(course, professor);
     }
 
+    @PermitAnyLogin
     @GetMapping("/list")
     public Page<CourseResponse> courseList(Pageable pageable){
         return courseRepository.findAll(pageable)

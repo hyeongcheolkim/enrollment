@@ -6,7 +6,7 @@ import com.khc.enrollment.entity.Course.CourseTime;
 import com.khc.enrollment.entity.Course.Day;
 import com.khc.enrollment.entity.member.Professor;
 import com.khc.enrollment.entity.member.Student;
-import com.khc.enrollment.exception.exceptoin.NotAuthenticatedException;
+import com.khc.enrollment.exception.exceptoin.NotAuthorizedException;
 import com.khc.enrollment.repository.ClassroomRepository;
 import com.khc.enrollment.repository.EnrollmentRepository;
 import com.khc.enrollment.repository.SubjectRepository;
@@ -23,8 +23,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Transactional
@@ -102,7 +100,7 @@ class EnrollmentServiceTest {
         Course course = courseService.open(courseOpenDTO);
 
         Assertions.assertThatThrownBy(() -> enrollmentService.enroll(student, course))
-                .isInstanceOf(NotAuthenticatedException.class)
+                .isInstanceOf(NotAuthorizedException.class)
                 .hasMessage("수강 신청 자격이 없습니다");
     }
 

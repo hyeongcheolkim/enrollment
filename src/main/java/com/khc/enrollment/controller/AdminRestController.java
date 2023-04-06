@@ -1,13 +1,13 @@
 package com.khc.enrollment.controller;
 
-import com.khc.enrollment.aop.annotation.PermitProfessor;
-import com.khc.enrollment.controller.request.ProfessorRegisterRequest;
+import com.khc.enrollment.aop.annotation.PermitAdmin;
+import com.khc.enrollment.controller.request.AdminRegisterRequest;
 import com.khc.enrollment.controller.response.LoginResponse;
-import com.khc.enrollment.entity.member.Professor;
+import com.khc.enrollment.entity.member.Admin;
 import com.khc.enrollment.exception.exceptoin.NoExistEntityException;
-import com.khc.enrollment.repository.ProfessorRepository;
-import com.khc.enrollment.service.ProfessorService;
-import com.khc.enrollment.service.dto.ProfessorRegisterDTO;
+import com.khc.enrollment.repository.AdminRepository;
+import com.khc.enrollment.service.AdminService;
+import com.khc.enrollment.service.dto.AdminRegisterDTO;
 import com.khc.enrollment.session.SessionConst;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
@@ -23,14 +23,14 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 
 @RestController
-@RequestMapping("/api/professor")
+@RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Transactional
-public class ProfessorRestController {
+public class AdminRestController {
 
-    private final ProfessorService professorService;
+    private final AdminService adminService;
 
-    private final ProfessorRepository professorRepository;
+    private final AdminRepository adminRepository;
 
     private final PasswordEncoder passwordEncoder;
     private final ModelMapper modelMapper;
@@ -41,25 +41,25 @@ public class ProfessorRestController {
             @RequestParam @NotBlank String loginId,
             @RequestParam @NotBlank String pw,
             HttpServletRequest request) {
-        Professor professor = professorService.login(loginId, pw).orElseThrow(NoExistEntityException::new);
-        logoutProfessor(request);
+        Admin admin = adminService.login(loginId, pw).orElseThrow(NoExistEntityException::new);
+        logoutAdmin(request);
 
         HttpSession session = request.getSession(true);
-        session.setAttribute(SessionConst.LOGIN_PROFESSOR, professor.getId());
+        session.setAttribute(SessionConst.LOGIN_PROFESSOR, admin.getId());
         session.setMaxInactiveInterval(1800);
 
         return ResponseEntity.ok(LoginResponse.builder()
-                .id(professor.getId())
+                .id(admin.getId())
                 .type(SessionConst.LOGIN_PROFESSOR)
                 .build());
     }
 
     @PostMapping("/logout")
     void logout(HttpServletRequest request) {
-        logoutProfessor(request);
+        logoutAdmin(request);
     }
 
-    private void logoutProfessor(HttpServletRequest request) {
+    private void logoutAdmin(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
         if (session == null)
             return;
@@ -67,20 +67,20 @@ public class ProfessorRestController {
     }
 
     @PostMapping("/register")
-    void register(@RequestBody @Valid ProfessorRegisterRequest professorRegisterRequest) {
-        String encodedPw = passwordEncoder.encode(professorRegisterRequest.getPw());
-        professorRegisterRequest.setPw(encodedPw);
+    void register(@RequestBody @Valid AdminRegisterRequest adminRegisterRequest) {
+        String encodedPw = passwordEncoder.encode(adminRegisterRequest.getPw());
+        adminRegisterRequest.setPw(encodedPw);
 
-        ProfessorRegisterDTO professorRegisterDTO = modelMapper.map(professorRegisterRequest, ProfessorRegisterDTO.class);
-        professorService.register(professorRegisterDTO);
+        AdminRegisterDTO adminRegisterDTO = modelMapper.map(adminRegisterRequest, AdminRegisterDTO.class);
+        adminService.register(adminRegisterDTO);
     }
 
-    @PermitProfessor
+    @PermitAdmin
     @PostMapping("/inactive")
     @Valid
-    void inactiveSubject(@Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR) Long professorId) {
-        Professor professor = professorRepository.findById(professorId)
+    void inactiveSubject(@Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR) Long adminId) {
+        Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(NoExistEntityException::new);
-        professorService.inactive(professor);
+        adminService.inactive(admin);
     }
 }

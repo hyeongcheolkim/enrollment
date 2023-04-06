@@ -1,5 +1,7 @@
 package com.khc.enrollment.controller;
 
+import com.khc.enrollment.aop.annotation.PermitAdmin;
+import com.khc.enrollment.aop.annotation.PermitAnyLogin;
 import com.khc.enrollment.controller.request.SubjectMakeRequest;
 import com.khc.enrollment.controller.response.SubjectResponse;
 import com.khc.enrollment.entity.Subject;
@@ -27,6 +29,7 @@ public class SubjectRestController {
 
     private final SubjectRepository subjectRepository;
 
+    @PermitAdmin
     @PostMapping("/make")
     void makeSubject(@RequestBody @Validated SubjectMakeRequest subjectMakeRequest) {
 
@@ -40,6 +43,7 @@ public class SubjectRestController {
         subjectService.make(subjectMakeDTO);
     }
 
+    @PermitAdmin
     @PostMapping("/inactive")
     @Valid
     void inactiveSubject(@RequestParam @NotNull Long subjectId) {
@@ -49,6 +53,7 @@ public class SubjectRestController {
         subjectService.inactive(subject);
     }
 
+    @PermitAdmin
     @GetMapping("/list")
     Page<SubjectResponse> subjectList(Pageable pageable) {
         return subjectRepository.findAllByActivatedTrue(pageable)

@@ -5,7 +5,7 @@ import com.khc.enrollment.entity.Course.Course;
 import com.khc.enrollment.entity.Course.CourseTime;
 import com.khc.enrollment.entity.Course.Day;
 import com.khc.enrollment.entity.member.Professor;
-import com.khc.enrollment.exception.exceptoin.NotAuthenticatedException;
+import com.khc.enrollment.exception.exceptoin.NotAuthorizedException;
 import com.khc.enrollment.repository.CourseRepository;
 import com.khc.enrollment.service.dto.CourseOpenDTO;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +34,7 @@ public class CourseService {
 
     public void close(Course course, Professor professor) {
         if (!course.getProfessor().equals(professor))
-            throw new NotAuthenticatedException();
+            throw new NotAuthorizedException();
 
         course.setActivated(false);
     }

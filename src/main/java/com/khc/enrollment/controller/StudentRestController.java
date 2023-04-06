@@ -1,5 +1,6 @@
 package com.khc.enrollment.controller;
 
+import com.khc.enrollment.aop.annotation.PermitStudent;
 import com.khc.enrollment.controller.request.StudentRegisterRequest;
 import com.khc.enrollment.controller.response.BasketResponse;
 import com.khc.enrollment.controller.response.LoginResponse;
@@ -89,6 +90,7 @@ public class StudentRestController {
         studentService.register(studentRegisterDTO);
     }
 
+    @PermitStudent
     @PostMapping("/inactive")
     @Valid
     void inactiveSubject(@Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT) Long studentId) {
@@ -97,6 +99,7 @@ public class StudentRestController {
         studentService.inactive(student);
     }
 
+    @PermitStudent
     @GetMapping("/basket")
     Page<BasketResponse> baskets(
             @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT) Long studentId,

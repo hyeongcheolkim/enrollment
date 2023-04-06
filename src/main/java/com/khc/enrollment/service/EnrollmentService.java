@@ -6,7 +6,7 @@ import com.khc.enrollment.entity.Course.CourseTime;
 import com.khc.enrollment.entity.Course.Day;
 import com.khc.enrollment.entity.member.Professor;
 import com.khc.enrollment.entity.member.Student;
-import com.khc.enrollment.exception.exceptoin.NotAuthenticatedException;
+import com.khc.enrollment.exception.exceptoin.NotAuthorizedException;
 import com.khc.enrollment.repository.EnrollmentRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,7 +29,7 @@ public class EnrollmentService {
         if (isFullCapacity(course))
             throw new RuntimeException("코스 인원이 꽉 찼습니다. 수강신청할 수 없습니다");
         if (isNotQualified(student, course))
-            throw new NotAuthenticatedException("수강 신청 자격이 없습니다");
+            throw new NotAuthorizedException("수강 신청 자격이 없습니다");
         if (isDuplicatedTime(student, course))
             throw new RuntimeException("신청한 과목의 수업시간이 기존 시간표와 중복됩니다");
         if (isDuplicatedEnroll(student, course))
@@ -64,7 +64,7 @@ public class EnrollmentService {
 
     public void drop(Student student, Enrollment enrollment) {
         if (!student.equals(enrollment.getStudent()))
-            throw new NotAuthenticatedException();
+            throw new NotAuthorizedException();
 
         enrollmentRepository.delete(enrollment);
         enrollmentRepository.flush();
@@ -72,7 +72,7 @@ public class EnrollmentService {
 
     public void grade(Professor professor, Enrollment enrollment, ScoreType scoreType) {
         if (!professor.equals(enrollment.getCourse().getProfessor()))
-            throw new NotAuthenticatedException();
+            throw new NotAuthorizedException();
 
         removePastEnrollmentIfPresent(enrollment);
 

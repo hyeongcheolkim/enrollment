@@ -35,7 +35,7 @@ public class SwaggerConfig {
 
         Server local = new Server();
         local.setDescription("local");
-        local.setUrl("http://localhost:8080");
+        local.setUrl("http://localhost:9090");
 
         Server prod = new Server();
         prod.setDescription("prod");

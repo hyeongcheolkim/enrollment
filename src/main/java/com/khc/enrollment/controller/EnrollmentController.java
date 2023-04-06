@@ -1,5 +1,8 @@
 package com.khc.enrollment.controller;
 
+import com.khc.enrollment.aop.annotation.PermitAnyLogin;
+import com.khc.enrollment.aop.annotation.PermitProfessor;
+import com.khc.enrollment.aop.annotation.PermitStudent;
 import com.khc.enrollment.controller.response.GradedEnrollmentResponse;
 import com.khc.enrollment.controller.response.OnSemesterEnrollmentResponse;
 import com.khc.enrollment.entity.Course.Course;
@@ -18,13 +21,11 @@ import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.RequestEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/enroll")
@@ -39,6 +40,7 @@ public class EnrollmentController {
     private final CourseRepository courseRepository;
     private final ProfessorRepository professorRepository;
 
+    @PermitStudent
     @PostMapping("/enroll")
     @Valid
     public void enroll(
@@ -50,6 +52,7 @@ public class EnrollmentController {
         enrollmentService.enroll(student, course);
     }
 
+    @PermitStudent
     @PostMapping("/drop")
     @Valid
     public void drop(
@@ -64,10 +67,11 @@ public class EnrollmentController {
         enrollmentService.drop(student, enrollment);
     }
 
+    @PermitProfessor
     @PostMapping("/grade")
     @Valid
     public void grade(
-            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGINP_PROFESSOR) Long professorId,
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR) Long professorId,
             @RequestParam @NotNull Long enrollmentId,
             @RequestParam @NotNull ScoreType scoreType) {
         Professor professor = professorRepository.findById(professorId)
@@ -78,6 +82,7 @@ public class EnrollmentController {
         enrollmentService.grade(professor, enrollment, scoreType);
     }
 
+    @PermitAnyLogin
     @GetMapping("/score")
     @Valid
     public Page<GradedEnrollmentResponse> gradedEnrollments(
@@ -90,6 +95,7 @@ public class EnrollmentController {
                 .map(GradedEnrollmentResponse::new);
     }
 
+    @PermitAnyLogin
     @GetMapping("/on-semester")
     public Page<OnSemesterEnrollmentResponse> onSemesterEnrollments(
             @RequestParam @NotNull Long studentId,

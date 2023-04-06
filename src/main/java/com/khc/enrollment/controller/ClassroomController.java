@@ -1,6 +1,8 @@
 package com.khc.enrollment.controller;
 
 
+import com.khc.enrollment.aop.annotation.PermitAdmin;
+import com.khc.enrollment.aop.annotation.PermitProfessor;
 import com.khc.enrollment.entity.Classroom;
 import com.khc.enrollment.exception.exceptoin.NoExistEntityException;
 import com.khc.enrollment.repository.ClassroomRepository;
@@ -27,6 +29,7 @@ public class ClassroomController {
 
     private final ClassroomRepository classroomRepository;
 
+    @PermitAdmin
     @PostMapping("/create")
     @Valid
     public void createClassroom(
@@ -40,6 +43,7 @@ public class ClassroomController {
         classroomService.create(createClassroomDTO);
     }
 
+    @PermitAdmin
     @PostMapping("/inactivate")
     @Valid
     public void deleteClassroom(@RequestParam @NotNull Long classroomId){
