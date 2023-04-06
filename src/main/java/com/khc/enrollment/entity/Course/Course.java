@@ -19,9 +19,10 @@ public class Course {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn
     private Subject subject;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn
     private Department department;
 
@@ -36,7 +37,6 @@ public class Course {
     private Integer division;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn
     private Classroom classroom;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -60,9 +60,7 @@ public class Course {
     @Enumerated(EnumType.STRING)
     private List<MajorType> prohibitedMajorTypes = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "course")
     @Builder.Default
     private List<Enrollment> enrollments = new ArrayList<>();
-
-
 }

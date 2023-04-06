@@ -27,7 +27,7 @@ public class Classroom {
     @Setter
     private Boolean activated = true;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "classroom")
     @Builder.Default
     List<Course> courses = new ArrayList<>();
 

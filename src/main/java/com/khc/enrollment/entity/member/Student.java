@@ -27,11 +27,11 @@ public class Student  {
     @Builder.Default
     private Map<MajorType, Department> majors = new HashMap<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
     @Builder.Default
     private List<Enrollment> enrollments = new ArrayList<>();
 
-    @OneToMany(fetch = FetchType.LAZY)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
     @Builder.Default
     private List<Basket> baskets = new ArrayList<>();
 }
