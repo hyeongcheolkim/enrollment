@@ -1,5 +1,13 @@
 # 수강신청 서비스 백엔드 RestAPI서버
 
+## 🎄 간단한 작동 모습
+
+- 학생페이지
+  ![학생소개](https://user-images.githubusercontent.com/72899681/230793469-1eed2625-7b37-4f32-bebf-1eeb09f9ad74.gif)
+
+- 교수페이지
+  ![교수소개](https://user-images.githubusercontent.com/72899681/230793785-1a30177a-ff8d-42de-8089-807c9942729f.gif)
+
 ## 📮 요구사항
 
 - 교수
@@ -47,12 +55,6 @@
 - RestConrollerAdvice를 통해 예외를 처리
 - @Valid를 사용해 값 validate
 
-## 🎄 간단한 작동 모습
 
-- 학생페이지
-![학생소개](https://user-images.githubusercontent.com/72899681/230793469-1eed2625-7b37-4f32-bebf-1eeb09f9ad74.gif)
-
-- 교수페이지
-![교수소개](https://user-images.githubusercontent.com/72899681/230793785-1a30177a-ff8d-42de-8089-807c9942729f.gif)
 
 ### [눌러서 프론트 소개 페이지로 가기](https://github.com/hyeongcheolkim/enrollmentFront)
