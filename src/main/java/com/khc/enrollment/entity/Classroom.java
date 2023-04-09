@@ -30,17 +30,4 @@ public class Classroom {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "classroom")
     @Builder.Default
     List<Course> courses = new ArrayList<>();
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final Classroom classroom = (Classroom) o;
-        return Objects.equals(code, classroom.code);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(code);
-    }
 }

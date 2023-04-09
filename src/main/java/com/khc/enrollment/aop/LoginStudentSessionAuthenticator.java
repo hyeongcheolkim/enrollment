@@ -16,14 +16,15 @@ import javax.servlet.http.HttpSession;
 @Component
 @Aspect
 @Slf4j
-@Order(1)
 public class LoginStudentSessionAuthenticator {
 
     @Around("@annotation(com.khc.enrollment.aop.annotation.PermitStudent)")
     public Object doAnnotation(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         HttpSession session = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest().getSession();
-        if(session == null || session.getAttribute(SessionConst.LOGIN_STUDENT) == null)
+        if(session == null || session.getAttribute(SessionConst.LOGIN_STUDENT) == null) {
+            log.info("접근 거부");
             throw new NotAuthenticatedException();
+        }
         return proceedingJoinPoint.proceed();
     }
 }

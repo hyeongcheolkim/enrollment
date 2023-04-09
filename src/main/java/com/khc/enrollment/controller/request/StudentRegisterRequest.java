@@ -13,6 +13,4 @@ public class StudentRegisterRequest {
     private String pw;
     @NotBlank
     private String name;
-    @NotNull
-    private Long originDepartmentId;
 }

@@ -10,5 +10,5 @@ import java.util.List;
 public interface SubjectRepository extends JpaRepository<Subject, Long> {
     List<Subject> findAllByCode(Integer code);
 
-    Page<Subject> findAllByActivatedTrue(Pageable pageable);
+    List<Subject> findAllByActivatedTrue();
 }

@@ -10,5 +10,5 @@ public class StudentRegisterDTO {
     private String loginId;
     private String pw;
     private String name;
-    private Department originDepartment;
+    private Long departmentId;
 }

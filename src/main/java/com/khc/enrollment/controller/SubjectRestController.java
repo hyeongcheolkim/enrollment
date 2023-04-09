@@ -3,6 +3,7 @@ package com.khc.enrollment.controller;
 import com.khc.enrollment.aop.annotation.PermitAdmin;
 import com.khc.enrollment.aop.annotation.PermitAnyLogin;
 import com.khc.enrollment.controller.request.SubjectMakeRequest;
+import com.khc.enrollment.controller.response.SubjectListResponse;
 import com.khc.enrollment.controller.response.SubjectResponse;
 import com.khc.enrollment.entity.Subject;
 import com.khc.enrollment.exception.exceptoin.NoExistEntityException;
@@ -12,12 +13,15 @@ import com.khc.enrollment.service.dto.SubjectMakeDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/subject")
@@ -53,10 +57,10 @@ public class SubjectRestController {
         subjectService.inactive(subject);
     }
 
-    @PermitAdmin
-    @GetMapping("/list")
-    Page<SubjectResponse> subjectList(Pageable pageable) {
-        return subjectRepository.findAllByActivatedTrue(pageable)
-                .map(SubjectResponse::new);
+    @PostMapping("/list")
+    ResponseEntity<SubjectListResponse> subjectList() {
+        final List<Subject> subjects = subjectRepository.findAllByActivatedTrue();
+
+        return ResponseEntity.ok(new SubjectListResponse(subjects));
     }
 }

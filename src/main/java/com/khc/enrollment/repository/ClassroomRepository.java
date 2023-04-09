@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface ClassroomRepository extends JpaRepository<Classroom, Long> {
     List<Classroom> findAllByCode(Integer code);
+
+    List<Classroom> findAllByActivatedTrue();
 }

@@ -2,6 +2,7 @@ package com.khc.enrollment.aop;
 
 import com.khc.enrollment.exception.exceptoin.NotAuthenticatedException;
 import com.khc.enrollment.session.SessionConst;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -14,14 +15,16 @@ import javax.servlet.http.HttpSession;
 
 @Component
 @Aspect
-@Order(1)
+@Slf4j
 public class LoginProfessorSessionAuthenticator {
 
     @Around("@annotation(com.khc.enrollment.aop.annotation.PermitProfessor)")
     public Object doAnnotation(ProceedingJoinPoint proceedingJoinPoint) throws Throwable {
         HttpSession session = ((ServletRequestAttributes) (RequestContextHolder.currentRequestAttributes())).getRequest().getSession();
-        if(session == null || session.getAttribute(SessionConst.LOGIN_PROFESSOR) == null)
+        if(session == null || session.getAttribute(SessionConst.LOGIN_PROFESSOR) == null) {
+            log.info("접근 거부");
             throw new NotAuthenticatedException();
+        }
         return proceedingJoinPoint.proceed();
     }
 }

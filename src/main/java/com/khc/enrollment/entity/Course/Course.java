@@ -47,18 +47,12 @@ public class Course {
     @Setter
     private Boolean activated = true;
 
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<CourseTime> courseTimes = new ArrayList<>();
+    @Embedded
+    private CourseTime courseTime;
 
     @ManyToMany(fetch = FetchType.LAZY)
     @Builder.Default
-    private List<Department> allowedDepartments = new ArrayList<>();
-
-    @ElementCollection(fetch = FetchType.LAZY)
-    @Builder.Default
-    @Enumerated(EnumType.STRING)
-    private List<MajorType> prohibitedMajorTypes = new ArrayList<>();
+    private List<Department> prohibitedDepartments = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "course")
     @Builder.Default

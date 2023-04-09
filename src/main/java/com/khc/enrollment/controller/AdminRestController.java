@@ -11,6 +11,7 @@ import com.khc.enrollment.service.dto.AdminRegisterDTO;
 import com.khc.enrollment.session.SessionConst;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotBlank;
 @RequestMapping("/api/admin")
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class AdminRestController {
 
     private final AdminService adminService;
@@ -42,15 +44,16 @@ public class AdminRestController {
             @RequestParam @NotBlank String pw,
             HttpServletRequest request) {
         Admin admin = adminService.login(loginId, pw).orElseThrow(NoExistEntityException::new);
-        logoutAdmin(request);
 
         HttpSession session = request.getSession(true);
-        session.setAttribute(SessionConst.LOGIN_PROFESSOR, admin.getId());
+        session.setAttribute(SessionConst.LOGIN_ADMIN, admin.getId());
         session.setMaxInactiveInterval(1800);
+        log.info("Admin Session Create [SessionId : {}]", session.getId());
 
         return ResponseEntity.ok(LoginResponse.builder()
                 .id(admin.getId())
-                .type(SessionConst.LOGIN_PROFESSOR)
+                .type(SessionConst.LOGIN_ADMIN)
+                .name(admin.getMemberInfo().getName())
                 .build());
     }
 
@@ -78,7 +81,7 @@ public class AdminRestController {
     @PermitAdmin
     @PostMapping("/inactive")
     @Valid
-    void inactiveSubject(@Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR) Long adminId) {
+    void inactiveSubject(@Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR, required = false) Long adminId) {
         Admin admin = adminRepository.findById(adminId)
                 .orElseThrow(NoExistEntityException::new);
         adminService.inactive(admin);

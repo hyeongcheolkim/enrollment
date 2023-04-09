@@ -1,19 +1,12 @@
 package com.khc.enrollment.controller.request;
 
 import com.khc.enrollment.entity.Course.CourseTime;
-import com.khc.enrollment.entity.Department;
-import com.khc.enrollment.entity.MajorType;
-import com.khc.enrollment.entity.Subject;
-import com.khc.enrollment.entity.member.Professor;
-import com.khc.enrollment.service.dto.CourseOpenDTO;
-import lombok.Builder;
 import lombok.Data;
 import org.springframework.lang.Nullable;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 
 @Data
@@ -45,12 +38,9 @@ public class CourseOpenRequest {
 
     private Long classroomId;
 
-    @Size(min = 1)
-    private List<CourseTime> courseTimes;
+    @NotNull
+    private CourseTime courseTime;
 
     @Nullable
-    private List<Long> allowedDepartmentIds;
-
-    @Nullable
-    private List<MajorType> prohibitedMajorTypes;
+    private List<Long> prohibitedDepartmentIds;
 }

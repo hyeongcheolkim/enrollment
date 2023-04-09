@@ -15,6 +15,7 @@ import com.khc.enrollment.service.dto.StudentRegisterDTO;
 import com.khc.enrollment.session.SessionConst;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -31,6 +34,7 @@ import javax.validation.constraints.NotBlank;
 @RequestMapping("/api/student")
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class StudentRestController {
 
     private final StudentService studentService;
@@ -46,17 +50,22 @@ public class StudentRestController {
     ResponseEntity<LoginResponse> login(
             @RequestParam @NotBlank String loginId,
             @RequestParam @NotBlank String pw,
-            HttpServletRequest request) {
+            HttpServletRequest request,
+            HttpServletResponse response) {
         Student student = studentService.login(loginId, pw).orElseThrow(NoExistEntityException::new);
-        logoutStudent(request);
 
         HttpSession session = request.getSession(true);
         session.setAttribute(SessionConst.LOGIN_STUDENT, student.getId());
         session.setMaxInactiveInterval(1800);
+        log.info("Session Create [SessionId : {}]", session.getId());
+
+        response.addCookie(new Cookie("JSESSIONID", session.getId()));
 
         return ResponseEntity.ok(LoginResponse.builder()
                 .id(student.getId())
                 .type(SessionConst.LOGIN_STUDENT)
+                .name(student.getMemberInfo().getName())
+                .departmentName(student.getDepartment().getName())
                 .build());
     }
 
@@ -74,9 +83,6 @@ public class StudentRestController {
 
     @PostMapping("/register")
     void register(@RequestBody @Valid StudentRegisterRequest studentRegisterRequest) {
-        Department originDepartment = departmentRepository.findById(studentRegisterRequest.getOriginDepartmentId())
-                .orElseThrow(NoExistEntityException::new);
-
         String encodedPw = passwordEncoder.encode(studentRegisterRequest.getPw());
         studentRegisterRequest.setPw(encodedPw);
 
@@ -84,7 +90,6 @@ public class StudentRestController {
                 .name(studentRegisterRequest.getName())
                 .pw(studentRegisterRequest.getPw())
                 .loginId(studentRegisterRequest.getLoginId())
-                .originDepartment(originDepartment)
                 .build();
 
         studentService.register(studentRegisterDTO);
@@ -93,16 +98,16 @@ public class StudentRestController {
     @PermitStudent
     @PostMapping("/inactive")
     @Valid
-    void inactiveSubject(@Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT) Long studentId) {
+    void inactiveSubject(@Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT, required = false) Long studentId) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(NoExistEntityException::new);
         studentService.inactive(student);
     }
 
     @PermitStudent
-    @GetMapping("/basket")
+    @PostMapping("/basket")
     Page<BasketResponse> baskets(
-            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT) Long studentId,
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT, required = false) Long studentId,
             Pageable pageable) {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(NoExistEntityException::new);

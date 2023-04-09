@@ -2,8 +2,6 @@ package com.khc.enrollment.controller.response;
 
 import com.khc.enrollment.entity.Course.Course;
 import com.khc.enrollment.entity.Course.CourseTime;
-import com.khc.enrollment.entity.MajorType;
-import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
@@ -32,20 +30,21 @@ public class CourseResponse {
 
     private Integer division;
 
+    private Integer subjectCode;
+
     private Long professorId;
 
     private String professorName;
 
-    private List<CourseTime> courseTimes;
+    private CourseTime courseTime;
 
-    private List<MajorType> prohibitedMajorTypes;
-
-    private List<DepartmentResponse> allowedDepartments;
+    private List<DepartmentResponse> prohibitedDepartments;
 
     public CourseResponse(Course course){
         this.courseId = course.getId();
         this.subjectId = course.getSubject().getId();
         this.subjectName = course.getSubject().getName();
+        this.subjectCode = course.getSubject().getCode();
         this.departmentId = course.getDepartment().getId();
         this.departmentName = course.getDepartment().getName();
         this.capacity = course.getCapacity();
@@ -55,9 +54,8 @@ public class CourseResponse {
         this.division = course.getDivision();
         this.professorId = course.getProfessor().getId();
         this.professorName = course.getProfessor().getMemberInfo().getName();
-        this.courseTimes = course.getCourseTimes();
-        this.prohibitedMajorTypes = course.getProhibitedMajorTypes();
-        this.allowedDepartments = course.getAllowedDepartments().stream()
+        this.courseTime = course.getCourseTime();
+        this.prohibitedDepartments = course.getProhibitedDepartments().stream()
                 .map(DepartmentResponse::new)
                 .collect(Collectors.toList());
     }

@@ -3,7 +3,7 @@ package com.khc.enrollment.controller;
 import com.khc.enrollment.aop.annotation.PermitAnyLogin;
 import com.khc.enrollment.aop.annotation.PermitProfessor;
 import com.khc.enrollment.aop.annotation.PermitStudent;
-import com.khc.enrollment.controller.response.GradedEnrollmentResponse;
+import com.khc.enrollment.controller.response.NotSemesterEnrollmentResponse;
 import com.khc.enrollment.controller.response.OnSemesterEnrollmentResponse;
 import com.khc.enrollment.entity.Course.Course;
 import com.khc.enrollment.entity.Enrollment;
@@ -44,7 +44,7 @@ public class EnrollmentController {
     @PostMapping("/enroll")
     @Valid
     public void enroll(
-            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT) Long studentId,
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT, required = false) Long studentId,
             @RequestParam @NotNull Long courseId) {
         Student student = studentRepository.findById(studentId).orElseThrow(NoExistEntityException::new);
         Course course = courseRepository.findById(courseId).orElseThrow(NoExistEntityException::new);
@@ -56,7 +56,7 @@ public class EnrollmentController {
     @PostMapping("/drop")
     @Valid
     public void drop(
-            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT) Long studentId,
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT, required = false) Long studentId,
             @RequestParam @NotNull Long enrollmentId
     ) {
         Student student = studentRepository.findById(studentId)
@@ -71,7 +71,7 @@ public class EnrollmentController {
     @PostMapping("/grade")
     @Valid
     public void grade(
-            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR) Long professorId,
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR, required = false) Long professorId,
             @RequestParam @NotNull Long enrollmentId,
             @RequestParam @NotNull ScoreType scoreType) {
         Professor professor = professorRepository.findById(professorId)
@@ -83,27 +83,36 @@ public class EnrollmentController {
     }
 
     @PermitAnyLogin
-    @GetMapping("/score")
+    @PostMapping("/not-semester/student")
     @Valid
-    public Page<GradedEnrollmentResponse> gradedEnrollments(
-            @RequestParam @NotNull Long studentId,
-            Pageable pageable
-    ) {
+    public Page<NotSemesterEnrollmentResponse> notSemesterEnrollments(
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT, required = false) Long studentId,
+            Pageable pageable) {
         Student student = studentRepository.findById(studentId).orElseThrow(NoExistEntityException::new);
-
         return enrollmentRepository.findAllByStudentAndOnSemesterFalse(student, pageable)
-                .map(GradedEnrollmentResponse::new);
+                .map(NotSemesterEnrollmentResponse::new);
     }
 
     @PermitAnyLogin
-    @GetMapping("/on-semester")
+    @PostMapping("/on-semester/student")
     public Page<OnSemesterEnrollmentResponse> onSemesterEnrollments(
-            @RequestParam @NotNull Long studentId,
-            Pageable pageable
-    ) {
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_STUDENT, required = false) Long studentId,
+            Pageable pageable) {
         Student student = studentRepository.findById(studentId).orElseThrow(NoExistEntityException::new);
 
         return enrollmentRepository.findAllByStudentAndOnSemesterTrue(student, pageable)
+                .map(OnSemesterEnrollmentResponse::new);
+    }
+
+    @PermitAnyLogin
+    @PostMapping("/on-semester/professor")
+    public Page<OnSemesterEnrollmentResponse> onSemesterProfessorEnrollments(
+            @Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR, required = false) Long professorId,
+            Pageable pageable) {
+        Professor professor = professorRepository.findById(professorId)
+                .orElseThrow(NoExistEntityException::new);
+
+        return enrollmentRepository.findAllByProfessorOnSemesterTrue(professor, pageable)
                 .map(OnSemesterEnrollmentResponse::new);
     }
 }

@@ -11,6 +11,7 @@ import com.khc.enrollment.service.dto.ProfessorRegisterDTO;
 import com.khc.enrollment.session.SessionConst;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,6 +27,7 @@ import javax.validation.constraints.NotBlank;
 @RequestMapping("/api/professor")
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class ProfessorRestController {
 
     private final ProfessorService professorService;
@@ -42,15 +44,16 @@ public class ProfessorRestController {
             @RequestParam @NotBlank String pw,
             HttpServletRequest request) {
         Professor professor = professorService.login(loginId, pw).orElseThrow(NoExistEntityException::new);
-        logoutProfessor(request);
 
         HttpSession session = request.getSession(true);
         session.setAttribute(SessionConst.LOGIN_PROFESSOR, professor.getId());
         session.setMaxInactiveInterval(1800);
+        log.info("Professor Session Create [SessionId : {}]", session.getId());
 
         return ResponseEntity.ok(LoginResponse.builder()
                 .id(professor.getId())
                 .type(SessionConst.LOGIN_PROFESSOR)
+                .name(professor.getMemberInfo().getName())
                 .build());
     }
 
@@ -78,7 +81,7 @@ public class ProfessorRestController {
     @PermitProfessor
     @PostMapping("/inactive")
     @Valid
-    void inactiveSubject(@Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR) Long professorId) {
+    void inactiveSubject(@Parameter(hidden = true) @SessionAttribute(name = SessionConst.LOGIN_PROFESSOR, required = false) Long professorId) {
         Professor professor = professorRepository.findById(professorId)
                 .orElseThrow(NoExistEntityException::new);
         professorService.inactive(professor);

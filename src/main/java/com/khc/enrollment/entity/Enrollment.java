@@ -27,7 +27,7 @@ public class Enrollment  {
     private boolean onSemester = true;
 
     @Setter
-    private ScoreType score;
+    private ScoreType scoreType;
 
     @Builder
     private Enrollment(Course course, Student student) {

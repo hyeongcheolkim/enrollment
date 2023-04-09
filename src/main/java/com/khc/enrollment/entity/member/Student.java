@@ -22,10 +22,9 @@ public class Student  {
     @Embedded
     private MemberInfo memberInfo;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @Setter
-    @Builder.Default
-    private Map<MajorType, Department> majors = new HashMap<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn
+    private Department department;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
     @Builder.Default

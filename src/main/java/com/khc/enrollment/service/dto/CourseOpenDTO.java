@@ -3,13 +3,11 @@ package com.khc.enrollment.service.dto;
 import com.khc.enrollment.entity.Classroom;
 import com.khc.enrollment.entity.Course.CourseTime;
 import com.khc.enrollment.entity.Department;
-import com.khc.enrollment.entity.MajorType;
 import com.khc.enrollment.entity.Subject;
 import com.khc.enrollment.entity.member.Professor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -33,9 +31,7 @@ public class CourseOpenDTO {
 
     private Professor professor;
 
-    private List<CourseTime> courseTimes;
+    private CourseTime courseTime;
 
-    private List<Department> allowedDepartments;
-
-    private List<MajorType> prohibitedMajorTypes;
+    private List<Department> prohibitedDepartments;
 }

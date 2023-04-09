@@ -53,8 +53,7 @@ public class DepartmentController {
         departmentService.inactive(department);
     }
 
-    @PermitAnyLogin
-    @GetMapping("/list")
+    @PostMapping("/list")
     public ResponseEntity<DepartmentListResponse> departmentList() {
         List<Department> departments = departmentRepository.findAll().stream()
                 .filter(Department::getActivated)
