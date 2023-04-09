@@ -33,3 +33,5 @@
   - AOP로 Session이 있는지 없는지 확인
   - RestConrollerAdvice를 통해 예외를 처리
   - @Valid를 사용해 값 validate
+
+### [유사 프론트 서버 링크](https://github.com/hyeongcheolkim/enrollmentFront)
