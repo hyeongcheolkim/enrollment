@@ -122,8 +122,8 @@ public class EnrollmentService {
     private boolean isDuplicatedOnSemesterEnroll(Course course, List<Enrollment> enrollments) {
         return enrollments.stream()
                 .filter(Enrollment::isOnSemester)
-                .map(e -> e.getCourse().getSubject().getCode())
-                .anyMatch(e -> e.equals(course.getSubject().getCode()));
+                .anyMatch(e -> course.getSubject().getCode().equals(course.getSubject().getCode())
+                && e.getCourse().getDivision().equals(course.getDivision()));
     }
 
     private boolean isDuplicatedEnroll(Student student, Course course) {
