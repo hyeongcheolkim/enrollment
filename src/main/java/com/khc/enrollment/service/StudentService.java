@@ -42,6 +42,7 @@ public class StudentService {
                                 .name(studentRegisterDTO.getName())
                                 .activated(true)
                                 .build())
+                .department(studentRegisterDTO.getDepartment())
                 .build();
         return studentRepository.save(student);
     }

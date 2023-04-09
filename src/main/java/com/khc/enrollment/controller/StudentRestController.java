@@ -83,6 +83,9 @@ public class StudentRestController {
 
     @PostMapping("/register")
     void register(@RequestBody @Valid StudentRegisterRequest studentRegisterRequest) {
+        Department department = departmentRepository.findById(studentRegisterRequest.getDepartmentId())
+                .orElseThrow(NoExistEntityException::new);
+
         String encodedPw = passwordEncoder.encode(studentRegisterRequest.getPw());
         studentRegisterRequest.setPw(encodedPw);
 
@@ -90,6 +93,7 @@ public class StudentRestController {
                 .name(studentRegisterRequest.getName())
                 .pw(studentRegisterRequest.getPw())
                 .loginId(studentRegisterRequest.getLoginId())
+                .department(department)
                 .build();
 
         studentService.register(studentRegisterDTO);
